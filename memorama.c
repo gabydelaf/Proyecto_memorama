@@ -18,6 +18,12 @@ struct cartas
     int cord1c, cord2c;
 };
 
+struct gameStatus{
+    char * currentPlayer;
+    int scoreJ1;
+    int scoreJ2;
+};
+
 Tablero  newTablero(){
     Tablero t = malloc(sizeof(Tablero));
     t->filas=0;
@@ -34,6 +40,14 @@ Cartas  newCartas(){
     c-> cord2f=0;
     c-> cord2c=0;
     return c;
+}
+
+GameStatus newGameStatus(){
+    GameStatus g = malloc(sizeof(GameStatus));
+    g->currentPlayer =0;
+    g->scoreJ1=0;
+    g->scoreJ2=0;
+    return g;
 }
 
 char ** fillMatrix(int f, int c){
@@ -137,8 +151,7 @@ void gameMode(struct tablero *t){
 
 }
 
-void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , struct cartas *k){
-
+void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , struct cartas *k, GameStatus g){
     if(t->jugadores==1){
         int pares = 0;
         printf("***JUEGO INDIVIDUAL***");
@@ -152,7 +165,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                 matriz[k->cord2f-1][k->cord2c-1]= '?';
             }
             else {
-                printf("\n Encontraste un par! ");
+                printf("\n ¡Encontraste un par! ");
                 pares++;
 
             }
@@ -164,7 +177,8 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                 printf("\n[%d]",enter);
                 if(enter == 1){
                     for(int i= 0; i<50; i++){
-                        printf("\n");}
+                        printf("\n");
+                    }
                     printMatrix(f,c,matriz);
                 }
                 else printf("\nIntentalo de nuevo: ");
@@ -174,9 +188,87 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
 
 
         }while (compare!=1);
-        printf("Felicidades broder! encontraste todos los pares sos un krak");
-
+        printf("¡Felicidades broder! encontraste todos los pares, sos un krak");
     }
+
+
+
+
+    else if(t->jugadores==2){
+        int pares = 0;
+        char * jugador1 = malloc(50);
+        char * jugador2 = malloc(50);
+        char * ganador = malloc(50);
+        printf("***JUEGO EN PAREJAS***");
+        printf("\n\tNombre del jugador 1: ");
+        scanf("%s",jugador1);
+        printf("\n\tNombre del jugador 2: ");
+        scanf("%s",jugador2);
+        printf("\nEs turno de %s\n", jugador1);
+        g->currentPlayer=jugador1;
+        printMatrix(f, c, matriz);
+        int compare;
+        do{
+            int iguales = pickCards(f,c,matriz,matriz2, k);
+            if(iguales!=1){
+                printf("\n No es un par :(  ");
+                matriz[k->cord1f-1][k->cord1c-1]= '?';
+                matriz[k->cord2f-1][k->cord2c-1]= '?';
+                if(g->currentPlayer==jugador1){
+                    g->currentPlayer= jugador2;
+                    printf("\nEs turno de %s", jugador2);
+                }
+                else if(g->currentPlayer==jugador2){
+                    g->currentPlayer= jugador1;
+                    printf("\nEs turno de %s", jugador1);
+                }
+            }
+            else {
+                printf("\n ¡Encontraste un par! ");
+                pares++;
+                if(g->currentPlayer==jugador1){
+                    g->scoreJ1 ++;
+                }
+                else if(g->currentPlayer==jugador2){
+                    g->scoreJ2++;
+                }
+
+
+            }
+            int enter;
+            do{
+                printf("\nPresiona 1 para continuar: ");
+                scanf("%d", &enter);
+
+                printf("\n[%d]",enter);
+                if(enter == 1){
+                    for(int i= 0; i<50; i++){
+                        printf("\n");
+                    }
+                    printMatrix(f,c,matriz);
+                }
+                else printf("\nIntentalo de nuevo: ");
+            }while(enter!=1);
+
+            compare = compareMatrix (f, c, matriz,matriz2);
+
+
+        }while (compare!=1);
+        if(g->scoreJ1 > g->scoreJ2)
+            ganador = jugador1;
+        else if(g->scoreJ2 > g->scoreJ1)
+            ganador = jugador2;
+        else{
+            printf("¡FelicidadeS! encontraron todos los pares y hubo un empate");
+
+        }
+        printf("¡Felicidades! encontraron todos los pares, el ganador es: %s\n\n",ganador);
+        printf("******MARCADOR******\n");
+        printf("%s encontró %d pares\n",jugador1,g->scoreJ1);
+        printf("%s encontró %d pares\n",jugador2,g->scoreJ2);
+    }
+
+
 }
 
 
