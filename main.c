@@ -10,7 +10,7 @@ int main()
     Cartas k = newCartas();
     gameMode(t);
     getSize(t);
-    //printf("Este es un nuevo mensaje \n");
+    printf("Este es un nuevo mensaje \n");
     char ** matriz = fillMatrix(getF(t), getC(t));
     char ** newMatrix = hiddenMatrix(getF(t), getC(t));
     printMatrix(getF(t), getC(t), newMatrix);
