@@ -282,7 +282,6 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
 
             compare = compareMatrix (f, c, matriz,matriz2);
 
-
         }while (compare!=1);
         printf("Felicidades broder! encontraste todos los pares, sos un krak");
     }
@@ -377,12 +376,12 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
 
         };
         typedef struct machine Art;
+//reservamos memoria para los miembros de la estructura
 
-        //reservamos memoria para los miembros de la estructura
-        Art * arti = malloc(sizeof(Art*));
-        arti->filas = malloc(sizeof(int*));
-        arti->columnas = malloc(sizeof(int*));
-        arti->conten = malloc(sizeof(char*));
+        Art * arti = malloc(sizeof(Art*)*10);
+        arti->filas = malloc(sizeof(int*)*10);
+        arti->columnas = malloc(sizeof(int*)*10);
+        arti->conten = malloc(sizeof(char*)*10);
 
         int compare; //variable a la que asignaremos el resultado de la función compareMatrix
         int flag = 0; //variable que nos indica si al levantar la segunda carta ya había una igual en la memoria de Arti
@@ -401,11 +400,11 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
         printf("***JUEGO CONTRA LA MAQUINA***");
         printMatrix(f, c, matriz);
 
-        do{
-            f11 = 0;
+        do{     f11 = 0;
             c11 = 0;
             f21= 0;
             c21= 0;
+
             int iguales = pickCards(f,c,matriz,matriz2, k); //regresa 1 si el usuario encontró un par
             if (iguales != 1){ //si encontró un par no hay que memorizarlas cartas, si no lo encontró comienza el proceso.
                 int i =0;
@@ -428,6 +427,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                                 f22 = k->cord2f;
                                 c22 = k->cord2c;
                             }
+
                         }
                         i++;
                     }
@@ -446,10 +446,14 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                 cont++;
                 i=0;
 
+
+
                 printf("\n No es un par :(  ");
                 matriz[k->cord1f-1][k->cord1c-1]= '?';
                 matriz[k->cord2f-1][k->cord2c-1]= '?';
+
                 int enter;
+
                 do{
                     printf("\nPresiona 1 para continuar: ");
                     scanf("%d", &enter);
@@ -485,6 +489,8 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                         f21=0;
                         c21=0;
 
+
+
                     }
                     else if(f12!=0){ //variables temporales si existía la segunda carta elegida por el usuario
                         f1 =  f12;
@@ -495,6 +501,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                         c12=0;
                         f22=0;
                         c22=0;
+
                     }
                     else{
 
@@ -538,14 +545,15 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
 
                     i=0;
                     if(f2 == 0 || c2 ==0){
-                        while(arti->conten[i]){//si la carta que eligió existe en su memoria y no es repetida, su segunda carta es esa
-                            if (arti->conten[i] == matriz[f1-1][c1-1]){
-                                if(arti->filas[i]!= f1 || arti->columnas[i]!= c1){
-                                    f2 = arti->filas[i];
-                                    c2 = arti->columnas[i];
+                        int j =0;
+                        while(arti->conten[j] ){//si la carta que eligió existe en su memoria y no es repetida, su segunda carta es esa
+                            if (arti->conten[j] == matriz[f1-1][c1-1]){
+                                if(arti->filas[j]!= f1 || arti->columnas[j]!= c1){
+                                    f2 = arti->filas[j];
+                                    c2 = arti->columnas[j];
                                 }
                             }
-                            i++;
+                            j++;
                         }
                     }
 
@@ -597,7 +605,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                         i=0;
                         while(arti->conten[i]){ //revisa si la segunda carta ya la tenía
                             if (arti->conten[i] == matriz[f2-1][c2-1]){
-                                if(arti->filas[i]!= f2 && arti->columnas[i]!= c2)
+                                if(arti->filas[i]!= f2 || arti->columnas[i]!= c2)
                                     flag = 1;
                             }
                             i++;
@@ -607,6 +615,10 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                         arti->filas[cont] = f2;
                         arti->columnas[cont] = c2;
                         cont++;
+
+
+
+
 
                     }
                     compare = compareMatrix (f, c, matriz,matriz2);
@@ -639,7 +651,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
             }
             else{
                 if(compare!=1){
-                    printf("\nEncontraste un par! \nVas de nuevo ");
+                    printf("\n¡Encontraste un par! \nVas de nuevo ");
                     paresU++;
                 }
             }
@@ -648,16 +660,16 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
 
         }while(compare!=1);//mientras no haya terminado el tablero
         printf("\nJuego Terminado! ");
-        printf("\n\n**MARCADOR**");
+        printf("\n***MARCADOR***");
         printf("\nPares encontrados por la maquina: %d ", paresM);
-        printf("\nPares que tu encontraste: %d", paresU);
+        printf("\nPares que tú encontraste: %d", paresU);
 
         if(paresM>paresU)
             printf("\nGano la maquina! ");
         else if(paresM<paresU)
-            printf("\nFelicidades!!!Ganaste!");
+            printf("\nFelicidades!Ganaste!");
         else
-            printf("\nHubo un empate, ¡Buen juego camaradas!");
+            printf("\nHubo un empate, Buen juego camaradas!");
 
         free(arti);
     }
