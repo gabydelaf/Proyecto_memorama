@@ -63,40 +63,52 @@ char ** fillMatrix(int f, int c){
 
 char CheckForRepetitives(char list[], char letter){
     if(list[letter-97] != letter){
-        //printf("NOT existent\n");
-        //printf("[%c]", letter);
         list[letter-97] = letter;
         return letter;
     }else{
         //printf("EXISTENT\n");
         letter = rand() % (26) + 97;
         letter = CheckForRepetitives(list, letter);
-        //return letter;
     }
     return letter;
 }
 
 char ** hiddenMatrix(int f, int c){
-
     srand(time(NULL));
     char ** newMatrix = (char**)malloc(f*sizeof(char*));
     char letras[27];
     char neew;
-    int k = (c/2);
-    for(int i = 0; i<f; i++){
+    int k =0;
+    for(int i = 0; i<f; i++)
         newMatrix[i]=(char*)malloc(c*sizeof(char));
-    }
-    for(int i = 0; i<f; i++){
-        for(int j=0; j<k; j++){
-            neew = rand() % (26) + 97; //97
-            neew = CheckForRepetitives(letras, neew);
-            newMatrix[i][j] = neew;
-            //printf("[%c] added to matrix\n", neew);
-            newMatrix[i][j + k] = neew;
-            //printf("Copy of [%c] added to matrix\n", neew);
-        }
 
+    if(c % 2 == 0){
+        k = (c/2);
+        for(int i = 0; i<f; i++){
+            for(int j=0; j<k; j++){
+                neew = rand() % (26) + 97; //97
+                neew = CheckForRepetitives(letras, neew);
+                newMatrix[i][j] = neew;
+                //printf("[%c] added to matrix\n", neew);
+                newMatrix[i][j + k] = neew;
+                //printf("Copy of [%c] added to matrix\n", neew);
+            }
+        }
     }
+    if(c % 2 != 0){
+        k= (f/2);
+        for(int i = 0; i<k; i++){
+            for(int j=0; j<c; j++){
+                neew = rand() % (26) + 97; //97
+                neew = CheckForRepetitives(letras, neew);
+                newMatrix[i][j] = neew;
+                //printf("[%c] added to matrix\n", neew);
+                newMatrix[i+k][j] = neew;
+                //printf("Copy of [%c] added to matrix\n", neew);
+            }
+        }
+    }
+
     return newMatrix;
 }
 
@@ -615,11 +627,6 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                         arti->filas[cont] = f2;
                         arti->columnas[cont] = c2;
                         cont++;
-
-
-
-
-
                     }
                     compare = compareMatrix (f, c, matriz,matriz2);
                 }while(matriz[f1-1][c1-1]== matriz[f2-1][c2-1] && compare!=1 );
@@ -662,7 +669,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
         printf("\nJuego Terminado! ");
         printf("\n***MARCADOR***");
         printf("\nPares encontrados por la maquina: %d ", paresM);
-        printf("\nPares que tú encontraste: %d", paresU);
+        printf("\nPares que tu encontraste: %d", paresU);
 
         if(paresM>paresU)
             printf("\nGano la maquina! ");
