@@ -56,7 +56,6 @@ char ** fillMatrix(int f, int c){
         matriz[i] = (char*)malloc(c*sizeof(char));
         for(int j=0; j<c; j++){
             matriz[i][j]= '?';
-
         }
     }
     return matriz;
@@ -150,10 +149,102 @@ void gameMode(struct tablero *t){
         else if(modo == 3)
             t->jugadores= 3;
         else
-            printf("\nModo inválido broder, intenta de nuevo\n ");
+            printf("\nModo invalido, intenta de nuevo\n ");
     }while(modo<1 || modo > 3);
 
 }
+
+//Funcion que regresa 1 si el usuario encontró un par
+int compareMatrix(int f, int c,  char ** matriz, char ** matriz2  ){
+    int compare = 0;
+    for(int i=0; i<f;i++){
+        for(int j=0; j<c;j++){
+            if(matriz[i][j]==matriz2[i][j]){
+                compare++;
+            }
+        }
+    }
+    if(compare>=(f*c))
+        return 1;
+    else return 0;
+}
+
+
+//funcion para elegir dos cartas
+int pickCards (int f, int c, char ** matriz, char ** matriz2 , struct cartas *k)
+{
+    do{
+        do{
+            printf("\nElige tu primer carta :\n* Fila(1 - %d): ", f);
+            scanf("%d", &k->cord1f);
+            if(k->cord1f <= 0 || k->cord1f>f)
+                printf("Fila invalida");
+        }while(k->cord1f>f || k->cord1f <1);
+
+        do{
+            printf("* Columna(1 - %d): ",c);
+            scanf("%d", &k->cord1c);
+            if(k->cord1c <= 0 || k->cord1c>c)
+                printf("Columna invalida");
+        }while(k->cord1c > c || k->cord1c <1);
+        printf("\nTu primer carta,[%d][%d] es '%c'\n",k->cord1f, k->cord1c, matriz2[k->cord1f-1][k->cord1c-1]);
+
+        if(matriz[k->cord1f-1][k->cord1c-1]==matriz2[k->cord1f-1][k->cord1c-1]){
+            printf("\n Esta carta ya fue descubierta, intentalo de nuevo: ");
+        }
+
+    }while(matriz[k->cord1f-1][k->cord1c-1]==matriz2[k->cord1f-1][k->cord1c-1]);
+
+    matriz[k->cord1f-1][k->cord1c-1] = matriz2[k->cord1f-1][k->cord1c-1];
+    printMatrix(f,c,matriz);
+
+    do{
+        do{
+            if(k->cord1f==k->cord2f && k->cord1c==k->cord2c)
+                printf("\nCarta igual a la anterior");
+            do{
+                printf("\nElige tu segunda carta :\n* Fila(1 - %d): ", f);
+                scanf("%d", &k->cord2f);
+                if(k->cord2f <= 0 || k->cord2f>f)
+                    printf("Fila invalida");
+            }while(k->cord2f>f || k->cord2f<=0);
+
+            do{
+                printf("* Columna(1 - %d): ",c);
+                scanf("%d", &k->cord2c);
+                if(k->cord2c <= 0 || k->cord2c>c )
+                    printf("Columna invalida");
+            }while(k->cord2c > c || k->cord2c<=0);
+        }while(k->cord1f==k->cord2f && k->cord1c==k->cord2c);
+
+        printf("\nTu segunda carta,[%d][%d] es '%c'\n",k->cord2f, k->cord2c, matriz2[k->cord2f-1][k->cord2c-1]);
+
+        if(matriz[k->cord2f-1][k->cord2c-1]==matriz2[k->cord2f-1][k->cord2c-1]){
+            printf("\n Esta carta ya fue descubierta, intentalo de nuevo: ");
+        }
+
+    }while(matriz[k->cord2f-1][k->cord2c-1]==matriz2[k->cord2f-1][k->cord2c-1]);
+
+    matriz[k->cord2f-1][k->cord2c-1] = matriz2[k->cord2f-1][k->cord2c-1];
+    printMatrix(f,c,matriz);
+
+    if(matriz[k->cord1f-1][k->cord1c-1]!= matriz[k->cord2f-1][k->cord2c-1]){
+        return 0;
+    }
+    else return 1;
+
+}
+
+int getF(struct tablero *t)
+{
+    return t->filas;
+}
+
+int getC(struct tablero *t)
+{
+    return t->columnas;
+}
+
 
 void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , struct cartas *k, GameStatus g){
     if(t->jugadores==1){
@@ -170,7 +261,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                 matriz[k->cord2f-1][k->cord2c-1]= '?';
             }
             else {
-                printf("\n ¡Encontraste un par! ");
+                printf("\n Encontraste un par! ");
                 pares++;
 
             }
@@ -193,10 +284,8 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
 
 
         }while (compare!=1);
-        printf("¡Felicidades broder! encontraste todos los pares, sos un krak");
+        printf("Felicidades broder! encontraste todos los pares, sos un krak");
     }
-
-
 
 
     else if(t->jugadores==2){
@@ -229,7 +318,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
                 }
             }
             else {
-                printf("\n ¡Encontraste un par! ");
+                printf("\n Encontraste un par! ");
                 pares++;
                 if(g->currentPlayer==jugador1){
                     g->scoreJ1 ++;
@@ -263,13 +352,16 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
         else if(g->scoreJ2 > g->scoreJ1)
             ganador = jugador2;
         else{
-            printf("¡Felicidades! encontraron todos los pares y hubo un empate");
+            printf("Felicidades! encontraron todos los pares y hubo un empate");
 
         }
-        printf("¡Felicidades! encontraron todos los pares, el ganador es: %s\n\n",ganador);
+        printf("Felicidades! encontraron todos los pares, el ganador es: %s\n\n",ganador);
         printf("******MARCADOR******\n");
         printf("%s encontro %d pares\n",jugador1,g->scoreJ1);
         printf("%s encontro %d pares\n",jugador2,g->scoreJ2);
+
+        free(jugador1);
+        free(jugador2);
     }
 
 
@@ -491,7 +583,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
 
 
                     if(matriz[f1-1][c1-1]== matriz[f2-1][c2-1]){
-                        printf("\n¡Encontre un par! ");
+                        printf("\nEncontre un par! ");
                         printf("Voy de nuevo ");
                         paresM++;
                     }
@@ -547,7 +639,7 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
             }
             else{
                 if(compare!=1){
-                    printf("\n¡Encontraste un par! \nVas de nuevo ");
+                    printf("\nEncontraste un par! \nVas de nuevo ");
                     paresU++;
                 }
             }
@@ -555,15 +647,15 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
             compare = compareMatrix (f, c, matriz,matriz2);
 
         }while(compare!=1);//mientras no haya terminado el tablero
-        printf("\n¡Juego Terminado! ");
-        printf("\n**MARCADOR**");
+        printf("\nJuego Terminado! ");
+        printf("\n\n**MARCADOR**");
         printf("\nPares encontrados por la maquina: %d ", paresM);
         printf("\nPares que tu encontraste: %d", paresU);
 
         if(paresM>paresU)
-            printf("\n¡Gano la maquina! ");
+            printf("\nGano la maquina! ");
         else if(paresM<paresU)
-            printf("\n¡Felicidades!¡Ganaste!");
+            printf("\nFelicidades!!!Ganaste!");
         else
             printf("\nHubo un empate, ¡Buen juego camaradas!");
 
@@ -571,96 +663,4 @@ void play(struct tablero * t, int f, int c, char ** matriz, char ** matriz2 , st
     }
 
 
-}
-
-
-int compareMatrix(int f, int c,  char ** matriz, char ** matriz2  ){
-    int compare = 0;
-    for(int i=0; i<f;i++){
-        for(int j=0; j<c;j++){
-            if(matriz[i][j]==matriz2[i][j]){
-                compare++;
-            }
-        }
-    }
-    if(compare>=(f*c))
-        return 1;
-    else return 0;
-}
-
-
-
-//funcion para elegir dos cartas
-int pickCards (int f, int c, char ** matriz, char ** matriz2 , struct cartas *k)
-{
-    do{
-        do{
-            printf("\nElige tu primer carta :\n* Fila(1 - %d): ", f);
-            scanf("%d", &k->cord1f);
-            if(k->cord1f <= 0 || k->cord1f>f)
-                printf("Fila invalida");
-        }while(k->cord1f>f || k->cord1f <1);
-
-        do{
-            printf("* Columna(1 - %d): ",c);
-            scanf("%d", &k->cord1c);
-            if(k->cord1c <= 0 || k->cord1c>c)
-                printf("Columna invalida");
-        }while(k->cord1c > c || k->cord1c <1);
-        printf("\nTu primer carta,[%d][%d] es '%c'\n",k->cord1f, k->cord1c, matriz2[k->cord1f-1][k->cord1c-1]);
-
-        if(matriz[k->cord1f-1][k->cord1c-1]==matriz2[k->cord1f-1][k->cord1c-1]){
-            printf("\n Esta carta ya fue descubierta, intentalo de nuevo: ");
-        }
-
-    }while(matriz[k->cord1f-1][k->cord1c-1]==matriz2[k->cord1f-1][k->cord1c-1]);
-
-    matriz[k->cord1f-1][k->cord1c-1] = matriz2[k->cord1f-1][k->cord1c-1];
-    printMatrix(f,c,matriz);
-
-    do{
-        do{
-            if(k->cord1f==k->cord2f && k->cord1c==k->cord2c)
-                printf("\nCarta igual a la anterior");
-            do{
-                printf("\nElige tu segunda carta :\n* Fila(1 - %d): ", f);
-                scanf("%d", &k->cord2f);
-                if(k->cord2f <= 0 || k->cord2f>f)
-                    printf("Fila invalida");
-            }while(k->cord2f>f || k->cord2f<=0);
-
-            do{
-                printf("* Columna(1 - %d): ",c);
-                scanf("%d", &k->cord2c);
-                if(k->cord2c <= 0 || k->cord2c>c )
-                    printf("Columna invalida");
-            }while(k->cord2c > c || k->cord2c<=0);
-        }while(k->cord1f==k->cord2f && k->cord1c==k->cord2c);
-
-        printf("\nTu segunda carta,[%d][%d] es '%c'\n",k->cord2f, k->cord2c, matriz2[k->cord2f-1][k->cord2c-1]);
-
-        if(matriz[k->cord2f-1][k->cord2c-1]==matriz2[k->cord2f-1][k->cord2c-1]){
-            printf("\n Esta carta ya fue descubierta, intentalo de nuevo: ");
-        }
-
-    }while(matriz[k->cord2f-1][k->cord2c-1]==matriz2[k->cord2f-1][k->cord2c-1]);
-
-    matriz[k->cord2f-1][k->cord2c-1] = matriz2[k->cord2f-1][k->cord2c-1];
-    printMatrix(f,c,matriz);
-
-    if(matriz[k->cord1f-1][k->cord1c-1]!= matriz[k->cord2f-1][k->cord2c-1]){
-        return 0;
-    }
-    else return 1;
-
-}
-
-int getF(struct tablero *t)
-{
-    return t->filas;
-}
-
-int getC(struct tablero *t)
-{
-    return t->columnas;
 }

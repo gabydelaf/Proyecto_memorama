@@ -12,7 +12,7 @@ int main()
     getSize(t);
     char ** matriz = fillMatrix(getF(t), getC(t));
     char ** newMatrix = hiddenMatrix(getF(t), getC(t));
-    printMatrix(getF(t), getC(t), newMatrix);
+    //printMatrix(getF(t), getC(t), newMatrix); //Matriz del memorama
     printf("\n\n");
     play(t, getF(t), getC(t), matriz, newMatrix,k,g);
     printMatrix(getF(t), getC(t), matriz);
