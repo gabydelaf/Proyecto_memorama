@@ -50,6 +50,7 @@ GameStatus newGameStatus(){
     return g;
 }
 
+//llena la matriz con '?'
 char ** fillMatrix(int f, int c){
     char ** matriz =(char**)malloc(f*sizeof(char*));
     for(int i = 0; i<f; i++){
@@ -61,6 +62,7 @@ char ** fillMatrix(int f, int c){
     return matriz;
 }
 
+//regresa una letra, y esta garantizado que es única
 char CheckForRepetitives(char list[], char letter){
     if(list[letter-97] != letter){
         list[letter-97] = letter;
@@ -73,38 +75,37 @@ char CheckForRepetitives(char list[], char letter){
     return letter;
 }
 
+// genera la matriz de pares del memorama
 char ** hiddenMatrix(int f, int c){
+    //inicializamos la funcion para generar carcteres aleatorios
     srand(time(NULL));
-    char ** newMatrix = (char**)malloc(f*sizeof(char*));
-    char letras[27];
+    char ** newMatrix = (char**)malloc(f*sizeof(char*)); //reservamos memoria
+    char letras[27];//letras para llenar la matriz
     char neew;
-    int k =0;
+    int x = f - 1;
+    int k = (c/2);
     for(int i = 0; i<f; i++)
         newMatrix[i]=(char*)malloc(c*sizeof(char));
 
     if(c % 2 == 0){
-        k = (c/2);
-        for(int i = 0; i<f; i++){
+        for(int i = 0; i<f ; i++){
             for(int j=0; j<k; j++){
-                neew = rand() % (26) + 97; //97
+                neew = rand() % (26) + 97; //genera un caracter random, 27 letras, 97= 'a' ascci
                 neew = CheckForRepetitives(letras, neew);
-                newMatrix[i][j] = neew;
-                //printf("[%c] added to matrix\n", neew);
-                newMatrix[i][j + k] = neew;
-                //printf("Copy of [%c] added to matrix\n", neew);
+                newMatrix[i][j] = neew; // se añade a la matriz
+                newMatrix[x][j + k] = neew; // par se añade a la matriz
             }
+            x--;
         }
     }
     if(c % 2 != 0){
         k= (f/2);
         for(int i = 0; i<k; i++){
             for(int j=0; j<c; j++){
-                neew = rand() % (26) + 97; //97
+                neew = rand() % (26) + 97; //genera un caracter random, 27 letras, 97= 'a' ascci
                 neew = CheckForRepetitives(letras, neew);
-                newMatrix[i][j] = neew;
-                //printf("[%c] added to matrix\n", neew);
-                newMatrix[i+k][j] = neew;
-                //printf("Copy of [%c] added to matrix\n", neew);
+                newMatrix[i][j] = neew; // se añade a la matriz
+                newMatrix[i+k][j] = neew; // par se añade a la matriz
             }
         }
     }
@@ -114,7 +115,7 @@ char ** hiddenMatrix(int f, int c){
 
 
 
-
+//funcion trampa, para imprimir matriz de pares
 void printMatrix(int f, int c, char ** matriz){
     int i,j;
     printf("\n");
