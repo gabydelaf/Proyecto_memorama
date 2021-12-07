@@ -137,16 +137,23 @@ void printMatrix(int f, int c, char ** matriz){
 
 void getSize(struct tablero *t) {
     int bandera =0;
-    printf("\nWorales. Elije un numero de filas, crak: ");
-    scanf("%d", &(t->filas));
-    if(t->filas %2 == 0)
-        bandera = 1;
     do{
-        printf("\nAh, perro. Vas con un numero de columnas, campeon: ");
-        scanf("%d", &(t->columnas));
-        if(t->columnas %2 != 0 && t->filas %2 != 0)
-            printf("\nAbusado broder, elegiste dos numeros impares jeje, vas otra vez xd: ");
-    }while(bandera == 0 && t->columnas %2 != 0);
+        printf("\nWorales. Elije un numero de filas, crak: ");
+        scanf("%d", &(t->filas));
+        if(t->filas %2 == 0)
+            bandera = 1;
+        do{
+            printf("\nAh, perro. Vas con un numero de columnas, campeon: ");
+            scanf("%d", &(t->columnas));
+            if(t->columnas %2 != 0 && t->filas %2 != 0){
+                printf("\nAbusado broder, elegiste dos numeros impares jeje, vas otra vez xd: ");
+            }
+        }while(bandera == 0 && t->columnas %2 != 0);
+        if((t->filas)*(t->columnas)> 27){
+            printf("\nAguas karnal!, el abecedario solo tiene 27 letras jeje ");
+        }
+    }while((t->filas)*(t->columnas)> 27);
+
 }
 
 //esta función define el numero de jugadores, el numero 1 si es individual, 2 si es en pareja y 3 si es contra la máquina
